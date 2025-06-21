@@ -119,6 +119,46 @@ const Whiteboard = () => {
     lastY = y;
   };
 
+    // for touch devices
+  const startTouchDrawing = (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const coords = getRelativeCoords(touch);
+    lastX = coords.x;
+    lastY = coords.y;
+    setDrawing(true);
+    saveState();
+  };
+
+  const touchDraw = (e) => {
+    e.preventDefault();
+    if (!drawing) return;
+
+    const touch = e.touches[0];
+    const coords = getRelativeCoords(touch);
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = brushSize;
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(coords.x, coords.y);
+    ctx.stroke();
+
+    socket.emit("draw", {
+      x0: lastX,
+      y0: lastY,
+      x1: coords.x,
+      y1: coords.y,
+      color,
+      brushSize,
+    });
+
+    lastX = coords.x;
+    lastY = coords.y;
+  };
+
   const stopDrawing = () => {
     setDrawing(false);
   };
@@ -190,12 +230,16 @@ const Whiteboard = () => {
         onMouseMove={draw}
         onMouseUp={stopDrawing}
         onMouseOut={stopDrawing}
+        onTouchStart={startTouchDrawing}
+        onTouchMove={touchDraw}
+        onTouchEnd={stopDrawing}
         style={{
           border: "2px solid black",
           display: "block",
           backgroundColor: "white",
           width: "100vw",
           height: "100vh",
+          touchAction: "none", // prevents zoom/scroll during drawing
         }}
       />
     </div>
