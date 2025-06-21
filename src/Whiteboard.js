@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
-// Change from localhost to production backend URL
-const socket = io("https://your-backend-url.com");
+const socket = io("https://whiteboard-backend-2.onrender.com"); 
+
 
 
 let lastX = 0;
