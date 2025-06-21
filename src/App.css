@@ -1,3 +1,13 @@
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+canvas {
+  display: block;
+}
+
+
 .App {
   text-align: center;
 }
